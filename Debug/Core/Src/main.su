@@ -1,0 +1,9 @@
+dwt_stm32_delay.h:25:22:DWT_Delay_us	24	static
+main.c:66:10:receive_data	16	static
+main.c:108:5:main	48	static
+main.c:181:6:SystemClock_Config	88	static
+main.c:221:13:MX_GPIO_Init	40	static
+main.c:255:6:buttonTask	8	static
+main.c:274:6:calcTask	8	static
+main.c:281:6:StartDefaultTask	16	static
+main.c:297:6:Error_Handler	4	static,ignoring_inline_asm
