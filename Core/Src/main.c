@@ -23,15 +23,13 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "dwt_stm32_delay.h"
+#include "ir_remote.h"
+#include "tic8213.h"
+#include "nec.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
-#define IR_chanel GPIOC
-#define SPI_CS_chanel GPIOA
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -63,45 +61,7 @@ void StartDefaultTask(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint32_t data;
-uint8_t count;
-
-uint32_t receive_data(void)
-{
-	uint32_t code = 0;
-
-	/* The START Sequence begin here
-	   * there will be a pulse of 9ms LOW and
-	   * than 4.5 ms space (HIGH)
-	   */
-	while (!(HAL_GPIO_ReadPin(IR_chanel, IR_Pin))); // wait for the pin to go high.. 9ms LOW
-	while ((HAL_GPIO_ReadPin(IR_chanel, IR_Pin))); // wait for the pin to go low.. 4.5ms HIGH
-	/* START of FRAME ends here*/
-
-	/* DATA Reception
-	   * We are only going to check the SPACE after 562.5us pulse
-	   * if the space is 562.5us, the bit indicates '0'
-	   * if the space is around 1.6ms, the bit is '1'
-	   */
-	for (int i = 0; i < 32; i++)
-	{
-		count = 0;
-		while (!(HAL_GPIO_ReadPin(IR_chanel, IR_Pin)))
-			;										  // wait for pin to go high.. this is 562.5us LOW
-		while ((HAL_GPIO_ReadPin(IR_chanel, IR_Pin))) // count the space length while the pin is high
-		{
-			count++;
-			DWT_Delay_us(100);
-		}
-		if (count > 12) // if the space is more than 1.2 ms
-		{
-			code |= (1UL << (31 - i)); // write 1
-		}
-		else
-			code &= ~(1UL << (31 - i)); // write 0
-	}
-	return code;
-}
+char charView[8] = "        ";
 /* USER CODE END 0 */
 
 /**
@@ -250,10 +210,7 @@ static void MX_SPI1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SPI1_Init 2 */
-	const uint8_t dataSPI = 0b111111111;
-	HAL_GPIO_WritePin(SPI_CS_chanel, SPI1_CS_Pin, GPIO_PIN_SET);
-	HAL_SPI_Transmit(&hspi1, (uint8_t *)&dataSPI, 1, 100);
-	HAL_GPIO_WritePin(SPI_CS_chanel, SPI1_CS_Pin, GPIO_PIN_RESET);
+
   /* USER CODE END SPI1_Init 2 */
 
 }
@@ -277,7 +234,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(led_GPIO_Port, led_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : IR_Pin */
   GPIO_InitStruct.Pin = IR_Pin;
@@ -291,8 +248,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SPI1_CS_Pin led_Pin */
-  GPIO_InitStruct.Pin = SPI1_CS_Pin|led_Pin;
+  /*Configure GPIO pins : SPI1_CS_Pin LED_Pin */
+  GPIO_InitStruct.Pin = SPI1_CS_Pin|LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -301,17 +258,8 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void buttonTask()
-{
-	while(1)
-	{
-		if(!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
-		{
-			HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-		}
-		osDelay(150);
-	}
-}
+
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -322,15 +270,21 @@ void buttonTask()
   */
 void calcTask()
 {
-	while (HAL_GPIO_ReadPin(IR_chanel, IR_Pin)); // wait for the pin to go low
-	data = receive_data();
-	/* USING SPI*/
-	const uint8_t dataSPI = 0b111111111;
-	HAL_GPIO_WritePin(SPI_CS_chanel, SPI1_CS_Pin, GPIO_PIN_SET);
-	HAL_SPI_Transmit(&hspi1, (uint8_t *)&dataSPI, 1, 100);
-	HAL_GPIO_WritePin(SPI_CS_chanel, SPI1_CS_Pin, GPIO_PIN_RESET);
+	/* Read from IR */
+	uint32_t dataFromIR;
+	while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
+	receiveIR(&dataFromIR);
+	char symbol;
+	ir2char(&dataFromIR, &symbol);
+	/* Maxim */
 
-	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	for(uint8_t i = 0; i < 8; ++i) {
+		charView[i] = symbol;
+	}
+	/* View on display */
+	display(charView);
+
+	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
