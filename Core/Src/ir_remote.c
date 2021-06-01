@@ -61,4 +61,5 @@ void ir2char(const uint32_t* const in, char* out)
 			*out = '=';
 			break;
 	}
+	*out = 0;
 }

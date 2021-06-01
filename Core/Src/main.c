@@ -210,7 +210,7 @@ static void MX_SPI1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SPI1_Init 2 */
-
+  HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_SET);
   /* USER CODE END SPI1_Init 2 */
 
 }
@@ -271,11 +271,14 @@ static void MX_GPIO_Init(void)
 void calcTask()
 {
 	/* Read from IR */
-	uint32_t dataFromIR;
-	while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
-	receiveIR(&dataFromIR);
 	char symbol;
-	ir2char(&dataFromIR, &symbol);
+	uint32_t dataFromIR;
+	do {
+		while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
+		receiveIR(&dataFromIR);
+		ir2char(&dataFromIR, &symbol);
+	} while(symbol == 0);
+
 	/* Maxim */
 
 	for(uint8_t i = 0; i < 8; ++i) {

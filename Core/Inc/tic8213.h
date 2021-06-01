@@ -16,17 +16,17 @@
 
 
 #define VIEW_NULL  0b00000000
-#define VIEW_MINUS 0b10000000
-#define VIEW_0     0b00111111
-#define VIEW_1     0b00000110
-#define VIEW_2     0b01011011
-#define VIEW_3     0b01001111
-#define VIEW_4     0b01100110
+#define VIEW_MINUS 0b01000000
+#define VIEW_0     0b01011111
+#define VIEW_1     0b01010000
+#define VIEW_2     0b00111011
+#define VIEW_3     0b01111001
+#define VIEW_4     0b01110100
 #define VIEW_5     0b01101101
-#define VIEW_6     0b01111101
-#define VIEW_7     0b00000111
+#define VIEW_6     0b01101111
+#define VIEW_7     0b01011000
 #define VIEW_8     0b01111111
-#define VIEW_9     0b01101111
+#define VIEW_9     0b01111101
 
 uint8_t view[8];
 extern const uint8_t numbers[];
