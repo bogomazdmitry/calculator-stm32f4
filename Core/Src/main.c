@@ -268,26 +268,148 @@ static void MX_GPIO_Init(void)
   * @param  argument: Not used
   * @retval None
   */
+void clearCharView()
+{
+    charView[0] = ' ';
+    charView[1] = ' ';
+    charView[2] = ' ';
+    charView[3] = ' ';
+    charView[4] = ' ';
+    charView[5] = ' ';
+    charView[6] = ' ';
+    charView[7] = ' ';
+}
+
+// we gotta rename the thing or (even better) make so display takes uint8_t[8] and not char[8]
+void i2char(uint32_t i, char out[8])
+{
+    for(int8_t k = 7; k >= 0 && i > 0; --k)
+    {
+        uint8_t x = i % 10;
+        i /= 10;
+
+        out[k] = x + '0';
+    }
+}
+
+// add number to buffer (charView) immediately and display it
 void calcTask()
 {
-	/* Read from IR */
-	char symbol;
-	uint32_t dataFromIR;
-	do {
-		while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
-		receiveIR(&dataFromIR);
-		ir2char(&dataFromIR, &symbol);
-	} while(symbol == 0);
+    clearCharView();
+    display(charView);
 
-	/* Maxim */
+    uint32_t irdata;
+    char receivedChar;
 
-	for(uint8_t i = 0; i < 8; ++i) {
-		charView[i] = symbol;
-	}
-	/* View on display */
-	display(charView);
+    uint32_t number1 = 0;
+    uint32_t number2 = 0;
 
-	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    for(int8_t i = 0; i < 8; ++i)
+    {
+        do {
+          while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
+          receiveIR(&irdata);
+          ir2char(&irdata, &receivedChar);
+        } while(symbol == 0);
+
+        if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
+        {
+            number1 = number1 * 10 + receivedChar - '0';
+            clearCharView();
+            display(charView);
+            i2char(number1, charView);
+            display(charView);
+            continue;
+        }
+        if(receivedChar == 'c')
+        {
+            return;
+        }
+        if(receivedChar == 'b')
+        {
+            number1 /= 10;
+            clearCharView();
+            display(charView);
+            i2char(number1, charView);
+            display(charView);
+            --i;
+            continue;
+        }
+        
+        // if reached user entered an operation
+        break;
+    }
+            
+    char operation = receivedChar;
+    clearCharView();
+    display(charView);
+
+    for(int8_t i = 0; i < 8; ++i)
+    {
+         do {
+          while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
+          receiveIR(&irdata);
+          ir2char(&irdata, &receivedChar);
+        } while(symbol == 0);
+
+        if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
+        {
+            number2 = number2 * 10 + receivedChar - '0';
+            clearCharView();
+            display(charView);
+            i2char(number2, charView);
+            display(charView);
+            continue;
+        }
+        if(receivedChar == 'c')
+        {
+            return;
+        }
+        if(receivedChar == 'b')
+        {
+            number2 /= 10;
+            clearCharView();
+            display(charView);
+            i2char(number2, charView);
+            display(charView);
+            --i;
+            continue;
+        }
+        if(receivedChar == '=')
+        {
+            break;
+        }
+        
+        // if reached user entered an operation
+        break;
+    }
+
+    uint32_t result;
+
+    switch(operation)
+    {
+        case '+':
+            result = number1 + number2;
+            break;
+        case '-':
+            result = number1 - number2;
+            break;
+        case '*':
+            result = number1 * number2;
+            break;
+        case '/':
+            result = number1 / number2;
+            break;
+        default:
+            // idk
+            break;
+    }
+
+    clearCharView();
+    display(charView);
+
+    i2char(result, charView);
+    display(charView);
 }
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void const * argument)
@@ -296,7 +418,8 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	calcTask();
+	  calcTask();
+	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     osDelay(1);
   }
   /* USER CODE END 5 */
