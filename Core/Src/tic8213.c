@@ -26,13 +26,17 @@ void char2seg(char in[8], uint8_t out[8])
 		{
 			out[i] = VIEW_MINUS;
 		}
+		else
+		{
+			out[i] = VIEW_NULL;
+		}
 	}
 }
 
 void display(char in[8])
 {
 	char2seg(in, view);
-	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_SET);
-	HAL_SPI_Transmit(&hspi1, (uint8_t *)view, 8, 100);
 	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_RESET);
+	HAL_SPI_Transmit(&hspi1, view, 8, 100);
+	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_SET);
 }

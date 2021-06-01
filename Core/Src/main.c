@@ -210,7 +210,7 @@ static void MX_SPI1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN SPI1_Init 2 */
-
+  HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_SET);
   /* USER CODE END SPI1_Init 2 */
 
 }
@@ -306,14 +306,17 @@ void calcTask()
 
     for(int8_t i = 0; i < 8; ++i)
     {
-        receiveIR(&irdata);
-        ir2char(&irdata, &receivedChar);
+        do {
+          while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
+          receiveIR(&irdata);
+          ir2char(&irdata, &receivedChar);
+        } while(symbol == 0);
 
         if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
         {
             number1 = number1 * 10 + receivedChar - '0';
-    clearCharView();
-    display(charView);
+            clearCharView();
+            display(charView);
             i2char(number1, charView);
             display(charView);
             continue;
@@ -325,8 +328,8 @@ void calcTask()
         if(receivedChar == 'b')
         {
             number1 /= 10;
-    clearCharView();
-    display(charView);
+            clearCharView();
+            display(charView);
             i2char(number1, charView);
             display(charView);
             --i;
@@ -343,14 +346,17 @@ void calcTask()
 
     for(int8_t i = 0; i < 8; ++i)
     {
-        receiveIR(&irdata);
-        ir2char(&irdata, &receivedChar);
+         do {
+          while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
+          receiveIR(&irdata);
+          ir2char(&irdata, &receivedChar);
+        } while(symbol == 0);
 
         if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
         {
             number2 = number2 * 10 + receivedChar - '0';
-    clearCharView();
-    display(charView);
+            clearCharView();
+            display(charView);
             i2char(number2, charView);
             display(charView);
             continue;
@@ -362,8 +368,8 @@ void calcTask()
         if(receivedChar == 'b')
         {
             number2 /= 10;
-    clearCharView();
-    display(charView);
+            clearCharView();
+            display(charView);
             i2char(number2, charView);
             display(charView);
             --i;
@@ -412,7 +418,8 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	calcTask();
+	  calcTask();
+	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     osDelay(1);
   }
   /* USER CODE END 5 */
