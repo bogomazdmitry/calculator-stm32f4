@@ -292,6 +292,28 @@ void i2char(uint32_t i, char out[8])
     }
 }
 
+void operate(char operation, uint32_t* result, uint32_t* number1, uint32_t* number2)
+{
+    switch(operation)
+    {
+        case '+':
+            *result = *number1 + *number2;
+            break;
+        case '-':
+            *result = *number1 - *number2;
+            break;
+        case '*':
+            *result = *number1 * *number2;
+            break;
+        case '/':
+            *result = *number1 / *number2;
+            break;
+        default:
+            // idk
+            break;
+    }
+}
+
 // add number to buffer (charView) immediately and display it
 void calcTask()
 {
@@ -310,7 +332,7 @@ void calcTask()
           while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
           receiveIR(&irdata);
           ir2char(&irdata, &receivedChar);
-        } while(symbol == 0);
+        } while(receivedChar == 0);
 
         if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
         {
@@ -337,6 +359,7 @@ void calcTask()
         }
         
         // if reached user entered an operation
+
         break;
     }
             
@@ -350,7 +373,7 @@ void calcTask()
           while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
           receiveIR(&irdata);
           ir2char(&irdata, &receivedChar);
-        } while(symbol == 0);
+        } while(receivedChar == 0);
 
         if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
         {
@@ -379,31 +402,19 @@ void calcTask()
         {
             break;
         }
-        
-        // if reached user entered an operation
-        break;
+        operate(operation, &number1, &number1, &number2);
+        clearCharView();
+		display(charView);
+		i2char(number1, charView);
+		display(charView);
+		number2 = 0;
+        i = -1;
+        continue;
     }
 
     uint32_t result;
 
-    switch(operation)
-    {
-        case '+':
-            result = number1 + number2;
-            break;
-        case '-':
-            result = number1 - number2;
-            break;
-        case '*':
-            result = number1 * number2;
-            break;
-        case '/':
-            result = number1 / number2;
-            break;
-        default:
-            // idk
-            break;
-    }
+    operate(operation, &result, &number1, &number2);
 
     clearCharView();
     display(charView);

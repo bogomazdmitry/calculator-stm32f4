@@ -15,8 +15,8 @@
 #define BUTTON_3         0xffe21d
 #define BUTTON_4         0xff22dd
 #define BUTTON_5         0xff02fd
-#define BUTTON_7         0xffe01d
-#define BUTTON_6         0xffc23f
+#define BUTTON_6         0xffc23d
+#define BUTTON_7         0xffe01f
 #define BUTTON_8         0xffa857
 #define BUTTON_9         0xff906f
 #define BUTTON_0         0xff9867

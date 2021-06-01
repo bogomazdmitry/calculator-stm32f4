@@ -60,6 +60,7 @@ void ir2char(const uint32_t* const in, char* out)
 		case BUTTON_OK:
 			*out = '=';
 			break;
+		default:
+			*out = 0;
 	}
-	*out = 0;
 }
