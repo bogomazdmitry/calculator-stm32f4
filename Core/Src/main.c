@@ -295,6 +295,9 @@ void i2char(uint32_t i, char out[8])
 // add number to buffer (charView) immediately and display it
 void calcTask()
 {
+    clearCharView();
+    display(charView);
+
     uint32_t irdata;
     char receivedChar;
 
@@ -309,19 +312,21 @@ void calcTask()
         if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
         {
             number1 = number1 * 10 + receivedChar - '0';
+    clearCharView();
+    display(charView);
             i2char(number1, charView);
             display(charView);
             continue;
         }
         if(receivedChar == 'c')
         {
-            // clear display
-            i = -1;
-            continue;
+            return;
         }
         if(receivedChar == 'b')
         {
             number1 /= 10;
+    clearCharView();
+    display(charView);
             i2char(number1, charView);
             display(charView);
             --i;
@@ -344,20 +349,21 @@ void calcTask()
         if(receivedChar - '0' >= 0 && receivedChar - '0' <= 9)
         {
             number2 = number2 * 10 + receivedChar - '0';
+    clearCharView();
+    display(charView);
             i2char(number2, charView);
             display(charView);
             continue;
         }
         if(receivedChar == 'c')
         {
-            // clear display
-            // restrat calcTask
-            i = -1;
-            continue;
+            return;
         }
         if(receivedChar == 'b')
         {
             number2 /= 10;
+    clearCharView();
+    display(charView);
             i2char(number2, charView);
             display(charView);
             --i;
