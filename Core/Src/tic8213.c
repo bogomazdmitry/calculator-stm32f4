@@ -12,23 +12,23 @@ const uint8_t numbers[] = {VIEW_0, VIEW_1, VIEW_2, VIEW_3, VIEW_4, VIEW_5, VIEW_
 
 void char2seg(char in[8], uint8_t out[8])
 {
-	for(uint8_t i = 0; i < 8; ++i)
+	for(int8_t i = 0, k = 7; i < 8; --k, ++i)
 	{
 		if(in[i] >= '0' && in[i] <= '9')
 		{
-			out[i] = numbers[in[i] - '0'];
+			out[k] = numbers[in[i] - '0'];
 		}
 		else if(out[i] == ' ')
 		{
-			out[i] = VIEW_NULL;
+			out[k] = VIEW_NULL;
 		}
 		else if(out[i] == '-')
 		{
-			out[i] = VIEW_MINUS;
+			out[k] = VIEW_MINUS;
 		}
 		else
 		{
-			out[i] = VIEW_NULL;
+			out[k] = VIEW_NULL;
 		}
 	}
 }

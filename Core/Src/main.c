@@ -317,9 +317,6 @@ void operate(char operation, uint32_t* result, uint32_t* number1, uint32_t* numb
 // add number to buffer (charView) immediately and display it
 void calcTask()
 {
-    clearCharView();
-    display(charView);
-
     uint32_t irdata;
     char receivedChar;
 
@@ -345,6 +342,8 @@ void calcTask()
         }
         if(receivedChar == 'c')
         {
+            clearCharView();
+            display(charView);
             return;
         }
         if(receivedChar == 'b')
@@ -386,6 +385,8 @@ void calcTask()
         }
         if(receivedChar == 'c')
         {
+            clearCharView();
+            display(charView);
             return;
         }
         if(receivedChar == 'b')
@@ -402,13 +403,13 @@ void calcTask()
         {
             break;
         }
-        operate(operation, &number1, &number1, &number2);
-        clearCharView();
-		display(charView);
-		i2char(number1, charView);
-		display(charView);
-		number2 = 0;
-        i = -1;
+//        operate(operation, &number1, &number1, &number2);
+//        clearCharView();
+//		display(charView);
+//		i2char(number1, charView);
+//		display(charView);
+//		number2 = 0;
+//        i = -1;
         continue;
     }
 
@@ -427,6 +428,8 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
+    clearCharView();
+    display(charView);
   for(;;)
   {
 	  calcTask();
