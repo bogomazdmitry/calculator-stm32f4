@@ -11,6 +11,7 @@ extern SPI_HandleTypeDef hspi1;
 const uint8_t numbers[] = {VIEW_0, VIEW_1, VIEW_2, VIEW_3, VIEW_4, VIEW_5, VIEW_6, VIEW_7, VIEW_8, VIEW_9};
 char charView[displaySize] = "        ";
 
+
 void clearCharView()
 {
 	for(uint8_t i = 0; i < displaySize; ++i)
@@ -40,6 +41,11 @@ void char2seg(char in[displaySize], uint8_t out[displaySize])
 			out[k] = VIEW_NULL;
 		}
 	}
+}
+
+void changeMinus()
+{
+	HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 }
 
 void addMinus()

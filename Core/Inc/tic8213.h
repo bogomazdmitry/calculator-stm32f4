@@ -40,5 +40,6 @@ void clearCharView();
 
 void clearMinus();
 void addMinus();
+void changeMinus();
 
 #endif /* INC_TIC8213_H_ */
