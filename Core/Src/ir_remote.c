@@ -64,3 +64,12 @@ void ir2char(const uint32_t* const in, char* out)
 			*out = 0;
 	}
 }
+
+void resiveIRChar()
+{
+	do {
+	  while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
+	  receiveIR(&irdata);
+	  ir2char(&irdata, &receivedChar);
+	} while(receivedChar == 0);
+}

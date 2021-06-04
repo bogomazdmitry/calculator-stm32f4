@@ -9,6 +9,7 @@
 #define INC_IR_REMOTE_H_
 
 #include <stdint.h>
+#include "ports.h"
 
 #define BUTTON_1         0xffa25d
 #define BUTTON_2         0xff629d
@@ -29,5 +30,9 @@
 #define BUTTON_OK        0xff38c7
 
 void ir2char(const uint32_t* const in, char* out);
+
+char receivedChar;
+uint32_t irdata;
+void resiveIRChar();
 
 #endif /* INC_IR_REMOTE_H_ */

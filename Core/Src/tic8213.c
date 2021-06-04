@@ -9,10 +9,19 @@
 extern SPI_HandleTypeDef hspi1;
 
 const uint8_t numbers[] = {VIEW_0, VIEW_1, VIEW_2, VIEW_3, VIEW_4, VIEW_5, VIEW_6, VIEW_7, VIEW_8, VIEW_9};
+char charView[displaySize] = "        ";
 
-void char2seg(char in[8], uint8_t out[8])
+void clearCharView()
 {
-	for(int8_t i = 0, k = 7; i < 8; --k, ++i)
+	for(uint8_t i = 0; i < displaySize; ++i)
+	{
+		charView[i] = ' ';
+	}
+}
+
+void char2seg(char in[displaySize], uint8_t out[displaySize])
+{
+	for(int8_t i = 0, k = displaySize - 1; i < displaySize; --k, ++i)
 	{
 		if(in[i] >= '0' && in[i] <= '9')
 		{
@@ -33,10 +42,35 @@ void char2seg(char in[8], uint8_t out[8])
 	}
 }
 
-void display(char in[8])
+void display(int* number)
+{
+    i2char(*number, charView);
+    display(charView);
+
+}
+
+void display(char in[displaySize])
 {
 	char2seg(in, view);
 	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(&hspi1, view, 8, 100);
+	HAL_SPI_Transmit(&hspi1, view, displaySize, 100);
 	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_SET);
+}
+
+// we gotta rename the thing or (even better) make so display takes uint8_t[8] and not char[8]
+void i2char(uint32_t i, char out[8])
+{
+    for(int8_t k = 7; k >= 0 && i > 0; --k)
+    {
+        uint8_t x = i % 10;
+        i /= 10;
+
+        out[k] = x + '0';
+    }
+}
+
+void clearDisplay()
+{
+    clearCharView();
+    display(charView);
 }

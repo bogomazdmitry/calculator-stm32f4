@@ -11,9 +11,7 @@
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
 #include "dwt_stm32_delay.h"
-
-#define IR_Pin GPIO_PIN_13
-#define IR_GPIO_Port GPIOC
+#include "ports.h"
 
 void receiveIR(uint32_t* out);
 

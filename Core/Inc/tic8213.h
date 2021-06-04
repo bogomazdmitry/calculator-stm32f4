@@ -10,10 +10,7 @@
 
 #include <stdint.h>
 #include "stm32f4xx_hal.h"
-
-#define SPI1_CS_Pin GPIO_PIN_4
-#define SPI1_CS_GPIO_Port GPIOA
-
+#include "ports.h"
 
 #define VIEW_NULL  0b00000000
 #define VIEW_MINUS 0b01000000
@@ -28,11 +25,16 @@
 #define VIEW_8     0b01111111
 #define VIEW_9     0b01111101
 
-uint8_t view[8];
+#define displaySize 8
+
+uint8_t view[displaySize];
 extern const uint8_t numbers[];
+extern char charView[];
 
-void char2seg(char in[8], uint8_t out[8]);
-
-void display(char in[8]);
+void char2seg(char in[displaySize], uint8_t out[displaySize]);
+void display(char in[displaySize]);
+void clearDisplay();
+void i2char(uint32_t i, char out[8]);
+void clearCharView();
 
 #endif /* INC_TIC8213_H_ */
