@@ -42,14 +42,34 @@ void char2seg(char in[displaySize], uint8_t out[displaySize])
 	}
 }
 
-void display(int* number)
+void addMinus()
 {
-    i2char(*number, charView);
-    display(charView);
-
+	if(HAL_GPIO_ReadPin(LED_GPIO_Port, LED_Pin))
+	{
+	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+	}
 }
 
-void display(char in[displaySize])
+void clearMinus()
+{
+	if(!HAL_GPIO_ReadPin(LED_GPIO_Port, LED_Pin))
+	{
+	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+	}
+}
+
+
+void displayInt(int32_t* number)
+{
+    i2char(*number, charView);
+    if(*number < 0)
+    {
+  	  addMinus();
+    }
+    displayString(charView);
+}
+
+void displayString(char in[displaySize])
 {
 	char2seg(in, view);
 	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_RESET);
@@ -58,7 +78,7 @@ void display(char in[displaySize])
 }
 
 // we gotta rename the thing or (even better) make so display takes uint8_t[8] and not char[8]
-void i2char(uint32_t i, char out[8])
+void i2char(int32_t i, char out[8])
 {
     for(int8_t k = 7; k >= 0 && i > 0; --k)
     {
@@ -71,6 +91,7 @@ void i2char(uint32_t i, char out[8])
 
 void clearDisplay()
 {
+	clearMinus();
     clearCharView();
-    display(charView);
+    displayString(charView);
 }

@@ -32,9 +32,13 @@ extern const uint8_t numbers[];
 extern char charView[];
 
 void char2seg(char in[displaySize], uint8_t out[displaySize]);
-void display(char in[displaySize]);
+void displayString(char in[displaySize]);
+void displayInt(int32_t* number);
 void clearDisplay();
-void i2char(uint32_t i, char out[8]);
+void i2char(int32_t i, char out[8]);
 void clearCharView();
+
+void clearMinus();
+void addMinus();
 
 #endif /* INC_TIC8213_H_ */

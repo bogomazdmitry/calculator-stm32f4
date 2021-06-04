@@ -12,7 +12,7 @@
 #include "ir_remote.h"
 #include "tic8213.h"
 
-void operate(char operation, uint32_t* result, uint32_t* number1, uint32_t* number2);
+void operate(char operation, int32_t* result, int32_t* number1, int32_t* number2);
 
 void calcTask();
 

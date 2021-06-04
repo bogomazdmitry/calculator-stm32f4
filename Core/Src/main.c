@@ -274,12 +274,10 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
-    clearCharView();
-    display(charView);
+	clearDisplay();
   for(;;)
   {
 	  calcTask();
-	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 	  osDelay(1);
   }
   /* USER CODE END 5 */

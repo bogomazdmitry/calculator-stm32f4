@@ -7,7 +7,7 @@
 
 #include "calc.h"
 
-void operate(char operation, uint32_t* result, uint32_t* number1, uint32_t* number2)
+void operate(char operation, int32_t* result, int32_t* number1, int32_t* number2)
 {
     switch(operation)
     {
@@ -32,8 +32,9 @@ void operate(char operation, uint32_t* result, uint32_t* number1, uint32_t* numb
 // add number to buffer (charView) immediately and display it
 void calcTask()
 {
-    uint32_t number1 = 0;
-    uint32_t number2 = 0;
+    int32_t number1 = 0;
+    int32_t number2 = 0;
+    char operation;
 
     for(int8_t i = 0; i < 8; ++i)
     {
@@ -42,20 +43,19 @@ void calcTask()
         {
             number1 = number1 * 10 + receivedChar - '0';
             clearDisplay();
-            display(&number1);
+            displayInt(&number1);
             continue;
         }
         if(receivedChar == 'c')
         {
-            clearCharView();
-            display(charView);
-            return;
+        	clearDisplay();
+        	return;
         }
         if(receivedChar == 'b')
         {
             number1 /= 10;
             clearDisplay();
-            display(&number1);
+            displayInt(&number1);
             --i;
             continue;
         }
@@ -64,8 +64,7 @@ void calcTask()
 
         break;
     }
-
-    char operation = receivedChar;
+    operation = receivedChar;
     clearDisplay();
 
     for(int8_t i = 0; i < 8; ++i)
@@ -76,7 +75,7 @@ void calcTask()
         {
             number2 = number2 * 10 + receivedChar - '0';
             clearDisplay();
-            display(&result);
+            displayInt(&number2);
             continue;
         }
         if(receivedChar == 'c')
@@ -88,7 +87,7 @@ void calcTask()
         {
             number2 /= 10;
             clearDisplay();
-            display(&result);
+            displayInt(&number2);
             --i;
             continue;
         }
@@ -111,5 +110,5 @@ void calcTask()
     operate(operation, &result, &number1, &number2);
 
     clearDisplay();
-    display(&result);
+    displayInt(&result);
 }
