@@ -6,7 +6,7 @@
  */
 #include "tic8213.h"
 
-extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef hspi2;
 
 const uint8_t numbers[] = {VIEW_0, VIEW_1, VIEW_2, VIEW_3, VIEW_4, VIEW_5, VIEW_6, VIEW_7, VIEW_8, VIEW_9};
 char charView[displaySize] = "        ";
@@ -79,7 +79,7 @@ void displayString(char in[displaySize])
 {
 	char2seg(in, view);
 	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(&hspi1, view, displaySize, 100);
+	HAL_SPI_Transmit(&hspi2, view, displaySize, 100);
 	HAL_GPIO_WritePin(SPI1_CS_GPIO_Port, SPI1_CS_Pin, GPIO_PIN_SET);
 }
 

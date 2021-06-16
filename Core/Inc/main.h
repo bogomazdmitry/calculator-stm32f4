@@ -34,6 +34,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "ports.h"
 /* USER CODE END Includes */
+
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
@@ -56,6 +57,13 @@ void Error_Handler(void);
 
 /* USER CODE END EFP */
 
+/* Private defines -----------------------------------------------------------*/
+#define SPI1_CS_Pin GPIO_PIN_4
+#define SPI1_CS_GPIO_Port GPIOA
+#define LED_Pin GPIO_PIN_5
+#define LED_GPIO_Port GPIOA
+#define IR_Pin GPIO_PIN_10
+#define IR_GPIO_Port GPIOC
 /* USER CODE BEGIN Private defines */
 /* USER CODE END Private defines */
 

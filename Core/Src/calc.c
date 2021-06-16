@@ -44,6 +44,8 @@ void calcTask()
 		for(int8_t i = 0; ; ++i)
 		{
 			resiveIRChar();
+
+			  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 			if(receivedChar == '-' && i == 0)
 			{
 				changeMinus();

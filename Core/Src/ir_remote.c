@@ -68,8 +68,10 @@ void ir2char(const uint32_t* const in, char* out)
 void resiveIRChar()
 {
 	do {
+
 	  while (HAL_GPIO_ReadPin(IR_GPIO_Port, IR_Pin)); // wait for the pin to go low
 	  receiveIR(&irdata);
 	  ir2char(&irdata, &receivedChar);
+	  osDelay(100);
 	} while(receivedChar == 0);
 }
