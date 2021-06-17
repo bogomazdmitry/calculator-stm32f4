@@ -35,7 +35,7 @@ void calcTask()
     int32_t outputNumber = 0;
     int32_t inputNumber = 0;
     char operation;
-
+    int8_t minus = 1;
     operation = receivedChar;
     clearDisplay();
 
@@ -45,38 +45,51 @@ void calcTask()
 		{
 			resiveIRChar();
 
-			  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-			if(receivedChar == '-' && i == 0)
+			if(i == 0)
 			{
-				changeMinus();
+				if(receivedChar == '-')
+				{
+					changeMinus();
+					minus = -1;
+					continue;
+				}
+				if(receivedChar == '0')
+				{
+					--i;
+					continue;
+				}
 			}
-			else if(receivedChar >= '0' && receivedChar <= '9')
+			if(receivedChar >= '0' && receivedChar <= '9')
 			{
 				if(i < displaySize)
 				{
 					inputNumber = inputNumber * 10 + receivedChar - '0';
-					clearDisplay();
-					displayInt(&inputNumber);
-					continue;
+					displayInt(inputNumber * minus);
 				}
 				else
 				{
 					--i;
 				}
+				continue;
 			}
-			else if(receivedChar == 'c')
+			if(receivedChar == 'c')
 			{
 				clearDisplay();
-				return;
+				i = -1;
+				minus = 1;
+				inputNumber = 0;
+				continue;
 			}
-			else if(receivedChar == 'b')
+			if(receivedChar == 'b')
 			{
 				inputNumber /= 10;
-				clearDisplay();
-				displayInt(&inputNumber);
-				--i;
+				displayInt(inputNumber * minus);
+				i -= 2;
+				continue;
 			}
+			break;
 		}
+		inputNumber *= minus;
 
 		if(receivedChar == '=')
 		{
@@ -84,6 +97,12 @@ void calcTask()
 			{
 				operate(operation, &outputNumber, &outputNumber, &inputNumber);
 				operation = 0;
+				displayInt(outputNumber);
+				outputNumber = 0;
+			}
+			else
+			{
+				displayInt(outputNumber);
 			}
 		}
 		else
@@ -91,14 +110,16 @@ void calcTask()
 			if(outputNumber == 0)
 			{
 				outputNumber = inputNumber;
+				operation = receivedChar;
 			}
 			else
 			{
 				operate(operation, &outputNumber, &outputNumber, &inputNumber);
 				operation = receivedChar;
 			}
+			displayInt(outputNumber);
 		}
-		displayInt(&outputNumber);
 		inputNumber = 0;
+	    minus = 1;
     }
 }

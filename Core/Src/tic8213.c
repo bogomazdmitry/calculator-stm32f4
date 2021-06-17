@@ -50,7 +50,7 @@ void changeMinus()
 
 void addMinus()
 {
-	if(HAL_GPIO_ReadPin(LED_GPIO_Port, LED_Pin))
+	if(!HAL_GPIO_ReadPin(LED_GPIO_Port, LED_Pin))
 	{
 	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 	}
@@ -58,17 +58,18 @@ void addMinus()
 
 void clearMinus()
 {
-	if(!HAL_GPIO_ReadPin(LED_GPIO_Port, LED_Pin))
+	if(HAL_GPIO_ReadPin(LED_GPIO_Port, LED_Pin))
 	{
 	  HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 	}
 }
 
 
-void displayInt(int32_t* number)
+void displayInt(int32_t number)
 {
-    i2char(*number, charView);
-    if(*number < 0)
+	clearDisplay();
+    i2char(number, charView);
+    if(number < 0)
     {
   	  addMinus();
     }
@@ -86,13 +87,21 @@ void displayString(char in[displaySize])
 // we gotta rename the thing or (even better) make so display takes uint8_t[8] and not char[8]
 void i2char(int32_t i, char out[8])
 {
-    for(int8_t k = 7; k >= 0 && i > 0; --k)
-    {
-        uint8_t x = i % 10;
-        i /= 10;
+	if(i == 0)
+	{
+		out[7] = '0';
+	}
+	else
+	{
+		i = i < 0 ? -i : i;
+		for(int8_t k = 7; k >= 0 && i > 0; --k)
+		{
+			uint8_t x = i % 10;
+			i /= 10;
 
-        out[k] = x + '0';
-    }
+			out[k] = x + '0';
+		}
+	}
 }
 
 void clearDisplay()

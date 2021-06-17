@@ -33,7 +33,7 @@ extern char charView[];
 
 void char2seg(char in[displaySize], uint8_t out[displaySize]);
 void displayString(char in[displaySize]);
-void displayInt(int32_t* number);
+void displayInt(int32_t number);
 void clearDisplay();
 void i2char(int32_t i, char out[8]);
 void clearCharView();
